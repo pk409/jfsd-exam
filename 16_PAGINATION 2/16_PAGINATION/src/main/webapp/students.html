@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="css/styles.css" />
+	<title>Pagination</title>
+</head>
+<body onload="loadData(1)" >
+	<div id="content"></div>
+	<div id="footer"></div>
+</body>
+<script type="text/javascript" src="js/main.js"></script>
+<script type="text/javascript">
+	var pageSelected;
+	function loadData(cpage){
+		pageSelected = cpage;
+		
+		var dataurl = "http://localhost:8081/student/getstudents/"+ cpage +"/15";
+		callApi("GET", dataurl, "", generateTable);
+		
+		var pageurl = "http://localhost:8081/student/getpages/15";
+		callApi("GET", pageurl, "", generatePages);
+	}
+	function generateTable(res){
+		var data = JSON.parse(res);
+		var table = `<table class='tbl'>
+					 	<tr>
+					 		<th class='ch1'>Roll No</th>
+					 		<th class='ch2'>Student Name</th>
+					 		<th class='ch3'>Department</th>
+					 		<th></th>
+					 	</tr>`;
+		for(var x in data){
+			table += `<tr>
+						<td class='cd1'>${data[x].rollno}</td>
+						<td class='cd2'>${data[x].name}</td>
+						<td class='cd3'>${data[x].dept}</td>
+						<td></td>
+					  </tr>`;
+		}
+		table += `</table>`;
+		content.innerHTML = table;
+	}
+	function generatePages(res){
+		var data = JSON.parse(res);
+		var pages = ``;
+		for(var x in data){
+			pages += `<label class=${pageSelected == data[x] ? "pageno-selected" : "pageno"} onclick="loadData('${data[x]}')">${data[x]}</label>`;
+		}
+		footer.innerHTML = pages;
+	}
+</script>
+</html>
